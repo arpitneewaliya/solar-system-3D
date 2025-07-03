@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Arial', sans-serif;
+}
+
+#info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  font-size: 12px;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 300px;
+}
+
+#controlPanel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 15px;
+  color: white;
+  font-size: 12px;
+  z-index: 100;
+  max-height: 80vh;
+  overflow-y: auto;
+  min-width: 280px;
+}
+
+#controlPanel h3 {
+  margin: 0 0 15px 0;
+  color: #dd0a0a;
+  text-align: center;
+  font-size: 14px;
+}
+
+.control-section {
+  margin-bottom: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.section-title {
+  color: #dd0a0a;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.planet-control {
+  margin-bottom: 12px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.planet-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.speed-control,
+.camera-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.control-label {
+  min-width: 20px;
+  font-size: 11px;
+  color: #ccc;
+}
+
+.speed-slider,
+.camera-slider {
+  flex: 1;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.speed-value,
+.camera-value {
+  min-width: 40px;
+  text-align: right;
+  font-size: 10px;
+  color: #ccc;
+}
+
+.reset-btn {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.reset-btn:hover {
+  background: #666;
+}
+
+.preset-btn {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 2px;
+}
+
+.preset-btn:hover {
+  background: #555;
+}
+
+
+#info h3 {
+  font-size: 1.5rem;
+}
