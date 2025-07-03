@@ -28,18 +28,18 @@ createStarfield();
 
 // Create a perspective camera
 const camera = new THREE.PerspectiveCamera(
-    75, // Field of view
+    75,
     window.innerWidth / window.innerHeight, // Aspect ratio
-    0.1, // Near clipping plane
-    1000 // Far clipping plane
+    0.1,
+    1000
 );
-camera.position.set(0, 10, 20); // Better viewing angle for full solar system
+camera.position.set(0, 10, 20);
 
 
 // Create a WebGL renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x000011); // Dark space background
+renderer.setClearColor(0x000011);
 document.body.appendChild(renderer.domElement);
 
 
@@ -198,12 +198,12 @@ planetData.forEach((data, index) => {
     planet.userData = { name: name, clickable: true };
     scene.add(planet);
 
-    // Create orbit ring - make it more visible
+    // Create orbit
     const orbitGeometry = new THREE.RingGeometry(orbitRadius - 0.05, orbitRadius + 0.05, 64);
     const orbitMaterial = new THREE.MeshBasicMaterial({
-        color: 0x888888, // Brighter gray
+        color: 0x888888,
         transparent: true,
-        opacity: 0.6, // Much more visible
+        opacity: 0.6,
         side: THREE.DoubleSide
     });
     const orbitRing = new THREE.Mesh(orbitGeometry, orbitMaterial);
@@ -215,14 +215,14 @@ planetData.forEach((data, index) => {
         mesh: planet,
         orbitRadius,
         orbitSpeed,
-        angle: Math.random() * Math.PI * 2, // Random starting position
+        angle: Math.random() * Math.PI * 2,
         name
     });
 });
 
 
 // Add Lighting
-const pointLight = new THREE.PointLight(0xffffff, 3, 100); // Increased intensity and distance
+const pointLight = new THREE.PointLight(0xffffff, 3, 100);
 pointLight.position.set(0, 0, 0);
 scene.add(pointLight);
 
@@ -312,14 +312,14 @@ const mouse = new THREE.Vector2();
 
 // Mouse click event
 function onMouseClick(event) {
-    // Calculate mouse position in normalized device coordinates
+    
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // Update the raycaster with camera and mouse position
+    
     raycaster.setFromCamera(mouse, camera);
 
-    // Get all clickable objects (planets and sun)
+    
     const clickableObjects = [sun, ...planets.map(p => p.mesh)];
     const intersects = raycaster.intersectObjects(clickableObjects);
 
@@ -341,7 +341,7 @@ document.addEventListener('click', (event) => {
     const card = document.getElementById('planetInfoCard');
     if (card && card.style.display === 'block') {
         if (!card.contains(event.target)) {
-            // Check if click was on a planet/sun
+            
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
@@ -367,10 +367,10 @@ document.addEventListener('keydown', (event) => {
 // Simple mouse controls for camera
 let mouseX = 0, mouseY = 0;
 let targetX = 0, targetY = 0;
-let cameraDistance = 20; // Current zoom distance
-const minDistance = 5;   // Closest zoom
-const maxDistance = 100; // Furthest zoom
-let manualCameraControl = false; // Track if user is manually controlling camera
+let cameraDistance = 20;
+const minDistance = 5;
+const maxDistance = 100;
+let manualCameraControl = false;
 
 
 // Camera position variables
@@ -395,7 +395,7 @@ function setupCameraControls() {
             const value = parseFloat(e.target.value);
             valueDisplay.textContent = value;
 
-            // Update camera position
+            
             if (axis === 'X') cameraX = value;
             else if (axis === 'Y') cameraY = value;
             else if (axis === 'Z') cameraZ = value;
@@ -410,7 +410,7 @@ function setupCameraControls() {
 // Update camera position
 function updateCameraPosition() {
     camera.position.set(cameraX, cameraY, cameraZ);
-    camera.lookAt(0, 0, 0); // Always look at the center (Sun)
+    camera.lookAt(0, 0, 0);
 }
 
 
@@ -448,14 +448,14 @@ function setCameraPreset(preset) {
 setupCameraControls();
 
 
-// Smooth zoom with mouse wheel (bonus!)
+
 document.addEventListener('wheel', (event) => {
     event.preventDefault();
     if (event.deltaY > 0) {
-        // Scroll down - zoom out
+        
         cameraDistance = Math.min(maxDistance, cameraDistance + 2);
     } else {
-        // Scroll up - zoom in
+        
         cameraDistance = Math.max(minDistance, cameraDistance - 2);
     }
 });
@@ -468,33 +468,33 @@ function animate() {
     // Rotate the Sun
     sun.rotation.y += 0.004;
 
-    // Update all planets' orbital positions
+    
     planets.forEach(planet => {
-        // Update orbit angle
+        
         planet.angle += planet.orbitSpeed;
 
-        // Calculate new position
+        
         planet.mesh.position.x = Math.cos(planet.angle) * planet.orbitRadius;
         planet.mesh.position.z = Math.sin(planet.angle) * planet.orbitRadius;
 
-        // Rotate planet on its axis
+        
         planet.mesh.rotation.y += 0.01;
     });
 
-    // Camera movement - use manual control if sliders are being used
+    // Camera movement
     if (manualCameraControl) {
-        // Manual camera control via sliders
+        
         camera.position.set(cameraX, cameraY, cameraZ);
         camera.lookAt(0, 0, 0);
     } else {
-        // Original mouse-based camera movement
+        
         targetX = mouseX * 0.001;
         targetY = mouseY * 0.001;
 
         camera.position.x += (targetX - camera.position.x) * 0.05;
         camera.position.y += (-targetY - camera.position.y) * 0.05;
 
-        // Update camera distance (zoom)
+        
         const currentDistance = camera.position.distanceTo(scene.position);
         if (Math.abs(currentDistance - cameraDistance) > 0.1) {
             const direction = camera.position.clone().normalize();
