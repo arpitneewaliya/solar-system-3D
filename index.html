@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sun in Three.js</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="info">
+        <h3>🌌 3D Solar System</h3>
+    </div>
+
+    <div id="controlPanel">
+        <h3>🎛️ Solar System Controls</h3>
+
+        <div class="control-section">
+            <div class="section-title">📹 Camera Position</div>
+            <div class="camera-control">
+                <span class="control-label">X:</span>
+                <input type="range" class="camera-slider" min="-50" max="50" step="1" value="0" id="cameraX">
+                <span class="camera-value" id="cameraX-value">0</span>
+            </div>
+            <div class="camera-control">
+                <span class="control-label">Y:</span>
+                <input type="range" class="camera-slider" min="-50" max="50" step="1" value="10" id="cameraY">
+                <span class="camera-value" id="cameraY-value">10</span>
+            </div>
+            <div class="camera-control">
+                <span class="control-label">Z:</span>
+                <input type="range" class="camera-slider" min="5" max="100" step="1" value="20" id="cameraZ">
+                <span class="camera-value" id="cameraZ-value">20</span>
+            </div>
+            <div style="margin-top: 8px;">
+                <button class="preset-btn" onclick="setCameraPreset('top')">Top View</button>
+                <button class="preset-btn" onclick="setCameraPreset('side')">Side View</button>
+                <button class="preset-btn" onclick="setCameraPreset('angle')">Angle View</button>
+                <button class="preset-btn" onclick="setCameraPreset('close')">Close Up</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
