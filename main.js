@@ -1,6 +1,7 @@
 // Create a scene
 const scene = new THREE.Scene();
 
+
 // Create starfield background
 function createStarfield() {
     const starsGeometry = new THREE.BufferGeometry();
@@ -11,7 +12,7 @@ function createStarfield() {
     });
 
     const starsVertices = [];
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 7000; i++) {
         const x = (Math.random() - 0.5) * 2000;
         const y = (Math.random() - 0.5) * 2000;
         const z = (Math.random() - 0.5) * 2000;
@@ -24,6 +25,7 @@ function createStarfield() {
 }
 createStarfield();
 
+
 // Create a perspective camera
 const camera = new THREE.PerspectiveCamera(
     75, // Field of view
@@ -33,11 +35,13 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, 10, 20); // Better viewing angle for full solar system
 
+
 // Create a WebGL renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x000011); // Dark space background
 document.body.appendChild(renderer.domElement);
+
 
 // Handle window resizing
 window.addEventListener('resize', () => {
@@ -45,6 +49,7 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
+
 
 // Planet information database
 const planetInfo = {
@@ -140,6 +145,7 @@ const planetInfo = {
     }
 };
 
+
 const textureLoader = new THREE.TextureLoader();
 const sunTexture = textureLoader.load('./public/sun_texture.jpg');
 const mercuryTexture = textureLoader.load('./public/mercury_texture.jpg');
@@ -150,6 +156,7 @@ const jupiterTexture = textureLoader.load('./public/jupiter_texture.jpg');
 const saturnTexture = textureLoader.load('./public/saturn_texture.jpg');
 const uranusTexture = textureLoader.load('./public/uranus_texture.jpg');
 const neptuneTexture = textureLoader.load('./public/neptune_texture.jpg');
+
 
 // Create Sun
 const sunGeometry = new THREE.SphereGeometry(3, 32, 32);
@@ -162,8 +169,10 @@ const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 sun.userData = { name: 'sun', clickable: true };
 scene.add(sun);
 
+
 // Create all planets
 const planets = [];
+
 
 // Planet data: [name, size, map, orbitRadius, orbitSpeed]
 const planetData = [
@@ -211,14 +220,17 @@ planetData.forEach((data, index) => {
     });
 });
 
+
 // Add Lighting
 const pointLight = new THREE.PointLight(0xffffff, 3, 100); // Increased intensity and distance
 pointLight.position.set(0, 0, 0);
 scene.add(pointLight);
 
+
 // Add ambient light for better visibility
 const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
 scene.add(ambientLight);
+
 
 // Create planet info card
 function createPlanetInfoCard() {
@@ -246,6 +258,7 @@ function createPlanetInfoCard() {
     return card;
 }
 
+
 // Show planet information
 function showPlanetInfo(planetName) {
     const card = document.getElementById('planetInfoCard') || createPlanetInfoCard();
@@ -272,13 +285,16 @@ function showPlanetInfo(planetName) {
         </div>
     `;
     
+
     card.style.display = 'block';
     
+
     // Add close button functionality
     document.getElementById('closeCard').addEventListener('click', () => {
         card.style.display = 'none';
     });
 }
+
 
 // Hide planet info card
 function hidePlanetInfo() {
@@ -288,9 +304,11 @@ function hidePlanetInfo() {
     }
 }
 
+
 // Raycaster for mouse interaction
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+
 
 // Mouse click event
 function onMouseClick(event) {
@@ -313,8 +331,10 @@ function onMouseClick(event) {
     }
 }
 
+
 // Add event listeners for mouse interaction
 document.addEventListener('click', onMouseClick);
+
 
 // Close card when clicking outside
 document.addEventListener('click', (event) => {
@@ -335,12 +355,14 @@ document.addEventListener('click', (event) => {
     }
 });
 
+
 // Close card with Escape key
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         hidePlanetInfo();
     }
 });
+
 
 // Simple mouse controls for camera
 let mouseX = 0, mouseY = 0;
@@ -350,8 +372,10 @@ const minDistance = 5;   // Closest zoom
 const maxDistance = 100; // Furthest zoom
 let manualCameraControl = false; // Track if user is manually controlling camera
 
+
 // Camera position variables
 let cameraX = 0, cameraY = 10, cameraZ = 20;
+
 
 document.addEventListener('mousemove', (event) => {
     if (!manualCameraControl) {
@@ -359,6 +383,7 @@ document.addEventListener('mousemove', (event) => {
         mouseY = (event.clientY - window.innerHeight / 2) / 100;
     }
 });
+
 
 // Create camera control listeners
 function setupCameraControls() {
@@ -381,11 +406,13 @@ function setupCameraControls() {
     });
 }
 
+
 // Update camera position
 function updateCameraPosition() {
     camera.position.set(cameraX, cameraY, cameraZ);
     camera.lookAt(0, 0, 0); // Always look at the center (Sun)
 }
+
 
 // Camera preset positions
 function setCameraPreset(preset) {
@@ -416,8 +443,10 @@ function setCameraPreset(preset) {
     updateCameraPosition();
 }
 
+
 // Initialize camera controls
 setupCameraControls();
+
 
 // Smooth zoom with mouse wheel (bonus!)
 document.addEventListener('wheel', (event) => {
@@ -430,6 +459,7 @@ document.addEventListener('wheel', (event) => {
         cameraDistance = Math.max(minDistance, cameraDistance - 2);
     }
 });
+
 
 // Animate everything
 function animate() {
