@@ -253,7 +253,7 @@ function createPlanetInfoCard() {
         backdrop-filter: blur(10px);
         box-shadow: 0 0 20px rgba(221, 10, 10, 0.5);
     `;
-    
+
     document.body.appendChild(card);
     return card;
 }
@@ -263,9 +263,9 @@ function createPlanetInfoCard() {
 function showPlanetInfo(planetName) {
     const card = document.getElementById('planetInfoCard') || createPlanetInfoCard();
     const info = planetInfo[planetName];
-    
+
     if (!info) return;
-    
+
     card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h2 style="margin: 0; color: #dd0a0a; font-size: 24px;">${info.name}</h2>
@@ -284,10 +284,10 @@ function showPlanetInfo(planetName) {
             <p style="margin: 5px 0; line-height: 1.4;">${info.facts}</p>
         </div>
     `;
-    
+
 
     card.style.display = 'block';
-    
+
 
     // Add close button functionality
     document.getElementById('closeCard').addEventListener('click', () => {
@@ -312,14 +312,14 @@ const mouse = new THREE.Vector2();
 
 // Mouse click event
 function onMouseClick(event) {
-    
+
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    
+
     raycaster.setFromCamera(mouse, camera);
 
-    
+
     const clickableObjects = [sun, ...planets.map(p => p.mesh)];
     const intersects = raycaster.intersectObjects(clickableObjects);
 
@@ -341,13 +341,13 @@ document.addEventListener('click', (event) => {
     const card = document.getElementById('planetInfoCard');
     if (card && card.style.display === 'block') {
         if (!card.contains(event.target)) {
-            
+
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             const clickableObjects = [sun, ...planets.map(p => p.mesh)];
             const intersects = raycaster.intersectObjects(clickableObjects);
-            
+
             if (intersects.length === 0) {
                 hidePlanetInfo();
             }
@@ -395,7 +395,7 @@ function setupCameraControls() {
             const value = parseFloat(e.target.value);
             valueDisplay.textContent = value;
 
-            
+
             if (axis === 'X') cameraX = value;
             else if (axis === 'Y') cameraY = value;
             else if (axis === 'Z') cameraZ = value;
@@ -452,58 +452,95 @@ setupCameraControls();
 document.addEventListener('wheel', (event) => {
     event.preventDefault();
     if (event.deltaY > 0) {
-        
+
         cameraDistance = Math.min(maxDistance, cameraDistance + 2);
     } else {
-        
+
         cameraDistance = Math.max(minDistance, cameraDistance - 2);
     }
 });
 
+let isPaused = false;
 
 // Animate everything
 function animate() {
-    requestAnimationFrame(animate);
-
-    // Rotate the Sun
-    sun.rotation.y += 0.004;
-
-    
-    planets.forEach(planet => {
-        
-        planet.angle += planet.orbitSpeed;
-
-        
-        planet.mesh.position.x = Math.cos(planet.angle) * planet.orbitRadius;
-        planet.mesh.position.z = Math.sin(planet.angle) * planet.orbitRadius;
-
-        
-        planet.mesh.rotation.y += 0.01;
-    });
-
-    // Camera movement
-    if (manualCameraControl) {
-        
-        camera.position.set(cameraX, cameraY, cameraZ);
-        camera.lookAt(0, 0, 0);
-    } else {
-        
-        targetX = mouseX * 0.001;
-        targetY = mouseY * 0.001;
-
-        camera.position.x += (targetX - camera.position.x) * 0.05;
-        camera.position.y += (-targetY - camera.position.y) * 0.05;
-
-        
-        const currentDistance = camera.position.distanceTo(scene.position);
-        if (Math.abs(currentDistance - cameraDistance) > 0.1) {
-            const direction = camera.position.clone().normalize();
-            camera.position.copy(direction.multiplyScalar(cameraDistance));
-        }
-
-        camera.lookAt(scene.position);
+    if (!isPaused) {
+        requestAnimationFrame(animate);
     }
 
+    if (!isPaused) {
+        // Rotate the Sun
+        sun.rotation.y += 0.004;
+
+
+        planets.forEach(planet => {
+
+            planet.angle += planet.orbitSpeed;
+
+
+            planet.mesh.position.x = Math.cos(planet.angle) * planet.orbitRadius;
+            planet.mesh.position.z = Math.sin(planet.angle) * planet.orbitRadius;
+
+
+            planet.mesh.rotation.y += 0.01;
+        });
+
+        // Camera movement
+        if (manualCameraControl) {
+
+            camera.position.set(cameraX, cameraY, cameraZ);
+            camera.lookAt(0, 0, 0);
+        } else {
+
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            camera.position.x += (targetX - camera.position.x) * 0.05;
+            camera.position.y += (-targetY - camera.position.y) * 0.05;
+
+
+            const currentDistance = camera.position.distanceTo(scene.position);
+            if (Math.abs(currentDistance - cameraDistance) > 0.1) {
+                const direction = camera.position.clone().normalize();
+                camera.position.copy(direction.multiplyScalar(cameraDistance));
+            }
+
+            camera.lookAt(scene.position);
+        }
+    }
     renderer.render(scene, camera);
 }
 animate();
+
+function pauseAnimation() {
+    isPaused = true;
+}
+
+function resumeAnimation() {
+    if (isPaused) {
+        isPaused = false;
+        animate();
+    }
+}
+
+window.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+        if (isPaused) {
+            resumeAnimation();
+        } else {
+            pauseAnimation();
+        }
+    }
+});
+
+
+playBtn = document.querySelector("#play-btn");
+pauseBtn = document.querySelector("#pause-btn");
+
+pauseBtn.addEventListener('click', function() {
+    pauseAnimation();
+});
+
+playBtn.addEventListener('click', function() {
+    resumeAnimation();
+});
