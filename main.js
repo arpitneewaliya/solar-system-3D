@@ -1,7 +1,6 @@
 // Create a scene
 const scene = new THREE.Scene();
 
-
 // Create starfield background
 function createStarfield() {
     const starsGeometry = new THREE.BufferGeometry();
@@ -25,16 +24,14 @@ function createStarfield() {
 }
 createStarfield();
 
-
 // Create a perspective camera
 const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight, // Aspect ratio
+    window.innerWidth / window.innerHeight,
     0.1,
     1000
 );
 camera.position.set(0, 10, 20);
-
 
 // Create a WebGL renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -42,14 +39,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x000011);
 document.body.appendChild(renderer.domElement);
 
-
 // Handle window resizing
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
-
 
 // Planet information database
 const planetInfo = {
@@ -145,7 +140,6 @@ const planetInfo = {
     }
 };
 
-
 const textureLoader = new THREE.TextureLoader();
 const sunTexture = textureLoader.load('./public/sun_texture.jpg');
 const mercuryTexture = textureLoader.load('./public/mercury_texture.jpg');
@@ -156,7 +150,6 @@ const jupiterTexture = textureLoader.load('./public/jupiter_texture.jpg');
 const saturnTexture = textureLoader.load('./public/saturn_texture.jpg');
 const uranusTexture = textureLoader.load('./public/uranus_texture.jpg');
 const neptuneTexture = textureLoader.load('./public/neptune_texture.jpg');
-
 
 // Create Sun
 const sunGeometry = new THREE.SphereGeometry(3, 32, 32);
@@ -169,10 +162,8 @@ const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 sun.userData = { name: 'sun', clickable: true };
 scene.add(sun);
 
-
 // Create all planets
 const planets = [];
-
 
 // Planet data: [name, size, map, orbitRadius, orbitSpeed]
 const planetData = [
@@ -185,7 +176,6 @@ const planetData = [
     ['uranus', 0.4, uranusTexture, 30, 0.002],
     ['neptune', 0.38, neptuneTexture, 36, 0.001]
 ];
-
 
 // Create planets and their orbits
 planetData.forEach((data, index) => {
@@ -215,22 +205,82 @@ planetData.forEach((data, index) => {
         mesh: planet,
         orbitRadius,
         orbitSpeed,
+        baseOrbitSpeed: orbitSpeed, // Store original speed for reset
+        speedMultiplier: 1.0, // Current speed multiplier
         angle: Math.random() * Math.PI * 2,
         name
     });
 });
-
 
 // Add Lighting
 const pointLight = new THREE.PointLight(0xffffff, 3, 100);
 pointLight.position.set(0, 0, 0);
 scene.add(pointLight);
 
-
 // Add ambient light for better visibility
 const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
 scene.add(ambientLight);
 
+// Setup speed controls for planets
+function setupSpeedControls() {
+    planets.forEach(planet => {
+        const slider = document.getElementById(`${planet.name}-speed`);
+        const valueDisplay = document.getElementById(`${planet.name}-value`);
+        
+        if (slider && valueDisplay) {
+            // Set initial value
+            slider.value = planet.speedMultiplier;
+            valueDisplay.textContent = planet.speedMultiplier.toFixed(1) + 'x';
+            
+            // Add event listener
+            slider.addEventListener('input', (e) => {
+                const multiplier = parseFloat(e.target.value);
+                planet.speedMultiplier = multiplier;
+                planet.orbitSpeed = planet.baseOrbitSpeed * multiplier;
+                valueDisplay.textContent = multiplier.toFixed(1) + 'x';
+            });
+        }
+    });
+}
+
+// Reset all planet speeds to 1.0x
+function resetPlanetSpeeds() {
+    planets.forEach(planet => {
+        planet.speedMultiplier = 1.0;
+        planet.orbitSpeed = planet.baseOrbitSpeed;
+        
+        const slider = document.getElementById(`${planet.name}-speed`);
+        const valueDisplay = document.getElementById(`${planet.name}-value`);
+        
+        if (slider && valueDisplay) {
+            slider.value = 1.0;
+            valueDisplay.textContent = '1.0x';
+        }
+    });
+}
+
+// Setup control panel toggle
+function setupControlPanel() {
+    const panel = document.getElementById('controls-panel');
+    const toggleBtn = document.getElementById('toggle-panel');
+    
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            panel.classList.toggle('collapsed');
+            toggleBtn.textContent = panel.classList.contains('collapsed') ? '→' : '←';
+        });
+    }
+    
+    // Setup reset speeds button
+    const resetBtn = document.getElementById('reset-speeds');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetPlanetSpeeds);
+    }
+}
+
+// Initialize all controls
+setupSpeedControls();
+setupControlPanel();
 
 // Create planet info card
 function createPlanetInfoCard() {
@@ -258,7 +308,6 @@ function createPlanetInfoCard() {
     return card;
 }
 
-
 // Show planet information
 function showPlanetInfo(planetName) {
     const card = document.getElementById('planetInfoCard') || createPlanetInfoCard();
@@ -285,16 +334,13 @@ function showPlanetInfo(planetName) {
         </div>
     `;
 
-
     card.style.display = 'block';
-
 
     // Add close button functionality
     document.getElementById('closeCard').addEventListener('click', () => {
         card.style.display = 'none';
     });
 }
-
 
 // Hide planet info card
 function hidePlanetInfo() {
@@ -304,21 +350,16 @@ function hidePlanetInfo() {
     }
 }
 
-
 // Raycaster for mouse interaction
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-
 // Mouse click event
 function onMouseClick(event) {
-
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-
     raycaster.setFromCamera(mouse, camera);
-
 
     const clickableObjects = [sun, ...planets.map(p => p.mesh)];
     const intersects = raycaster.intersectObjects(clickableObjects);
@@ -331,17 +372,14 @@ function onMouseClick(event) {
     }
 }
 
-
 // Add event listeners for mouse interaction
 document.addEventListener('click', onMouseClick);
-
 
 // Close card when clicking outside
 document.addEventListener('click', (event) => {
     const card = document.getElementById('planetInfoCard');
     if (card && card.style.display === 'block') {
         if (!card.contains(event.target)) {
-
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
@@ -355,14 +393,12 @@ document.addEventListener('click', (event) => {
     }
 });
 
-
 // Close card with Escape key
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         hidePlanetInfo();
     }
 });
-
 
 // Simple mouse controls for camera
 let mouseX = 0, mouseY = 0;
@@ -372,10 +408,8 @@ const minDistance = 5;
 const maxDistance = 100;
 let manualCameraControl = false;
 
-
 // Camera position variables
 let cameraX = 0, cameraY = 10, cameraZ = 20;
-
 
 document.addEventListener('mousemove', (event) => {
     if (!manualCameraControl) {
@@ -384,35 +418,33 @@ document.addEventListener('mousemove', (event) => {
     }
 });
 
-
 // Create camera control listeners
 function setupCameraControls() {
     ['X', 'Y', 'Z'].forEach(axis => {
         const slider = document.getElementById(`camera${axis}`);
         const valueDisplay = document.getElementById(`camera${axis}-value`);
 
-        slider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
-            valueDisplay.textContent = value;
+        if (slider && valueDisplay) {
+            slider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                valueDisplay.textContent = value;
 
+                if (axis === 'X') cameraX = value;
+                else if (axis === 'Y') cameraY = value;
+                else if (axis === 'Z') cameraZ = value;
 
-            if (axis === 'X') cameraX = value;
-            else if (axis === 'Y') cameraY = value;
-            else if (axis === 'Z') cameraZ = value;
-
-            manualCameraControl = true;
-            updateCameraPosition();
-        });
+                manualCameraControl = true;
+                updateCameraPosition();
+            });
+        }
     });
 }
-
 
 // Update camera position
 function updateCameraPosition() {
     camera.position.set(cameraX, cameraY, cameraZ);
     camera.lookAt(0, 0, 0);
 }
-
 
 // Camera preset positions
 function setCameraPreset(preset) {
@@ -432,30 +464,34 @@ function setCameraPreset(preset) {
     }
 
     // Update sliders
-    document.getElementById('cameraX').value = cameraX;
-    document.getElementById('cameraY').value = cameraY;
-    document.getElementById('cameraZ').value = cameraZ;
-    document.getElementById('cameraX-value').textContent = cameraX;
-    document.getElementById('cameraY-value').textContent = cameraY;
-    document.getElementById('cameraZ-value').textContent = cameraZ;
+    const sliders = ['cameraX', 'cameraY', 'cameraZ'];
+    const values = [cameraX, cameraY, cameraZ];
+    
+    sliders.forEach((sliderId, index) => {
+        const slider = document.getElementById(sliderId);
+        const valueDisplay = document.getElementById(`${sliderId}-value`);
+        
+        if (slider && valueDisplay) {
+            slider.value = values[index];
+            valueDisplay.textContent = values[index];
+        }
+    });
 
     manualCameraControl = true;
     updateCameraPosition();
 }
 
+// Make setCameraPreset available globally
+window.setCameraPreset = setCameraPreset;
 
 // Initialize camera controls
 setupCameraControls();
 
-
-
 document.addEventListener('wheel', (event) => {
     event.preventDefault();
     if (event.deltaY > 0) {
-
         cameraDistance = Math.min(maxDistance, cameraDistance + 2);
     } else {
-
         cameraDistance = Math.max(minDistance, cameraDistance - 2);
     }
 });
@@ -472,32 +508,28 @@ function animate() {
         // Rotate the Sun
         sun.rotation.y += 0.004;
 
-
         planets.forEach(planet => {
-
+            // Update orbit angle using current speed
             planet.angle += planet.orbitSpeed;
 
-
+            // Update planet position
             planet.mesh.position.x = Math.cos(planet.angle) * planet.orbitRadius;
             planet.mesh.position.z = Math.sin(planet.angle) * planet.orbitRadius;
 
-
+            // Rotate planet on its axis
             planet.mesh.rotation.y += 0.01;
         });
 
         // Camera movement
         if (manualCameraControl) {
-
             camera.position.set(cameraX, cameraY, cameraZ);
             camera.lookAt(0, 0, 0);
         } else {
-
             targetX = mouseX * 0.001;
             targetY = mouseY * 0.001;
 
             camera.position.x += (targetX - camera.position.x) * 0.05;
             camera.position.y += (-targetY - camera.position.y) * 0.05;
-
 
             const currentDistance = camera.position.distanceTo(scene.position);
             if (Math.abs(currentDistance - cameraDistance) > 0.1) {
@@ -533,14 +565,18 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
+// Setup play/pause buttons
+const playBtn = document.querySelector("#play-btn");
+const pauseBtn = document.querySelector("#pause-btn");
 
-playBtn = document.querySelector("#play-btn");
-pauseBtn = document.querySelector("#pause-btn");
+if (pauseBtn) {
+    pauseBtn.addEventListener('click', function() {
+        pauseAnimation();
+    });
+}
 
-pauseBtn.addEventListener('click', function() {
-    pauseAnimation();
-});
-
-playBtn.addEventListener('click', function() {
-    resumeAnimation();
-});
+if (playBtn) {
+    playBtn.addEventListener('click', function() {
+        resumeAnimation();
+    });
+}

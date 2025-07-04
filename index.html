@@ -1,52 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sun in Three.js</title>
+    <title>Solar System Explorer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <div id="info">
-        <h3>🌌 3D Solar System</h3>
-        <p>Press Spacebar to pause the animation.</p>
-        <button id="pause-btn">Pause ⏸️</button>
-        <button id="play-btn">Play ▶️</button>
-    </div>
+    <div id="controls-panel">
+        <div class="panel-header">
+            <h2>Solar System Controls</h2>
+            <button id="toggle-panel">←</button>
+        </div>
+        
+        <div class="panel-content">
+            <!-- Master Controls -->
+            <div class="control-section">
+                <h3>Master Controls</h3>
+                <div class="button-group">
+                    <button id="play-btn" class="control-btn">▶ Play</button>
+                    <button id="pause-btn" class="control-btn">⏸ Pause</button>
+                    <button id="reset-speeds" class="control-btn">🔄 Reset Speeds</button>
+                </div>
+            </div>
 
-    <div id="controlPanel">
-        <h3>🎛️ Solar System Controls</h3>
+            <!-- Planet Speed Controls -->
+            <div class="control-section">
+                <h3>Planet Speeds</h3>
+                <div class="speed-controls">
+                    <div class="speed-control">
+                        <label for="mercury-speed">Mercury</label>
+                        <input type="range" id="mercury-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="mercury-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="venus-speed">Venus</label>
+                        <input type="range" id="venus-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="venus-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="earth-speed">Earth</label>
+                        <input type="range" id="earth-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="earth-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="mars-speed">Mars</label>
+                        <input type="range" id="mars-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="mars-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="jupiter-speed">Jupiter</label>
+                        <input type="range" id="jupiter-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="jupiter-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="saturn-speed">Saturn</label>
+                        <input type="range" id="saturn-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="saturn-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="uranus-speed">Uranus</label>
+                        <input type="range" id="uranus-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="uranus-value">1.0x</span>
+                    </div>
+                    <div class="speed-control">
+                        <label for="neptune-speed">Neptune</label>
+                        <input type="range" id="neptune-speed" min="0" max="5" step="0.1" value="1">
+                        <span id="neptune-value">1.0x</span>
+                    </div>
+                </div>
+            </div>
 
-        <div class="control-section">
-            <div class="section-title">📹 Camera Position</div>
-            <div class="camera-control">
-                <span class="control-label">X:</span>
-                <input type="range" class="camera-slider" min="-50" max="50" step="1" value="0" id="cameraX">
-                <span class="camera-value" id="cameraX-value">0</span>
-            </div>
-            <div class="camera-control">
-                <span class="control-label">Y:</span>
-                <input type="range" class="camera-slider" min="-50" max="50" step="1" value="10" id="cameraY">
-                <span class="camera-value" id="cameraY-value">10</span>
-            </div>
-            <div class="camera-control">
-                <span class="control-label">Z:</span>
-                <input type="range" class="camera-slider" min="5" max="100" step="1" value="20" id="cameraZ">
-                <span class="camera-value" id="cameraZ-value">20</span>
-            </div>
-            <div style="margin-top: 8px;">
-                <button class="preset-btn" onclick="setCameraPreset('top')">Top View</button>
-                <button class="preset-btn" onclick="setCameraPreset('side')">Side View</button>
-                <button class="preset-btn" onclick="setCameraPreset('angle')">Angle View</button>
-                <button class="preset-btn" onclick="setCameraPreset('close')">Close Up</button>
+            <!-- Camera Controls -->
+            <div class="control-section">
+                <h3>Camera Position</h3>
+                <div class="camera-controls">
+                    <div class="camera-presets">
+                        <button onclick="setCameraPreset('top')" class="preset-btn">Top View</button>
+                        <button onclick="setCameraPreset('side')" class="preset-btn">Side View</button>
+                        <button onclick="setCameraPreset('angle')" class="preset-btn">Angle View</button>
+                        <button onclick="setCameraPreset('close')" class="preset-btn">Close View</button>
+                    </div>
+                    <div class="camera-sliders">
+                        <div class="slider-group">
+                            <label for="cameraX">X: <span id="cameraX-value">0</span></label>
+                            <input type="range" id="cameraX" min="-50" max="50" step="1" value="0">
+                        </div>
+                        <div class="slider-group">
+                            <label for="cameraY">Y: <span id="cameraY-value">10</span></label>
+                            <input type="range" id="cameraY" min="-50" max="50" step="1" value="10">
+                        </div>
+                        <div class="slider-group">
+                            <label for="cameraZ">Z: <span id="cameraZ-value">20</span></label>
+                            <input type="range" id="cameraZ" min="5" max="100" step="1" value="20">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <div id="instructions">
+        <p>🖱️ Click on planets to learn about them | 🎮 Use controls to adjust speeds | 📷 Change camera views</p>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
     <script src="main.js"></script>
 </body>
-
 </html>
